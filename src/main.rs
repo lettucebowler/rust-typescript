@@ -2,11 +2,9 @@ mod shapes;
 
 use std::{str::FromStr, fmt::Display};
 
-use shapes::{circle::Circle, collisions::{Collidable, Points, Contains}};
-
-use crate::shapes::rect::Rect;
-
 use anyhow::Result;
+use shapes::{rect::Rect, circle::Circle, collisions::{Points, Contains, Collidable}};
+
 enum Shape {
     Rect(Rect),
     Circ(Circle),
@@ -27,7 +25,7 @@ impl FromStr for Shape {
     }
 }
 
-impl Points for Shape {
+impl Points for &Shape {
     fn points(&self) -> shapes::collisions::PointIter {
         match self {
             Shape::Rect(rect) => return rect.points(),
@@ -36,7 +34,7 @@ impl Points for Shape {
     }
 }
 
-impl Contains for Shape {
+impl Contains for &Shape {
     fn contains_point(&self, point: (f64, f64)) -> bool {
         match self {
             Shape::Rect(rect) => return rect.contains_point(point),
@@ -53,6 +51,7 @@ impl Display for Shape {
         }
     }
 }
+
 fn main() -> Result<()> {
     let file = std::fs::read_to_string("shapes")?;
     let shapes = file
